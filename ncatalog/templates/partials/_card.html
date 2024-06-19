@@ -1,0 +1,22 @@
+{% load static %}
+{% for clothing in clothes %}
+<div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+    <a href="{% url 'detail_clothing' clothing.id %}" style="text-decoration: none;">
+        <div class="card mb-4">
+            <img class="card-img-top" src="{{ clothing.path.url }}" alt="{{ clothing.title }}">
+            <a href="{% url 'like_clothing' clothing.id %}" id="likeButton" class="like-button {% if liked %}liked{% endif %}">
+                <i class="fa {% if liked %}fa-thumbs-down{% else %}fa-thumbs-up{% endif %}"></i>
+                {% if user.is_authenticated %}
+                    {% if liked %}
+                        {{ clothing.total_likes }}
+                    {% else %}
+                        {{ clothing.total_likes }}
+                    {% endif %}
+                {% else %}
+                    {{ clothing.total_likes }}
+                {% endif %}
+            </a>
+        </div>
+    </a>
+</div>
+{% endfor %}

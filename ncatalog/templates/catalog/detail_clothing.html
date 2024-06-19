@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+
+    .liked {
+        color: white;
+        fill : rgb(182, 27, 27);
+    }
+
+    .like-button i {
+        margin-right: 8px;
+    }
+</style>
+{% endblock %}
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const likeButton = document.getElementById('likeButton');
+        likeButton.addEventListener('click', function() {
+            this.classList.toggle('liked');
+            const icon = this.querySelector('i');
+            if (this.classList.contains('liked')) {
+                this.prepend(icon);
+                icon.className = 'fa fa-thumbs-up';
+            } else {
+                this.prepend(icon);
+                icon.className = 'fa fa-thumbs-up';
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ clothing.title }}</h5>
+    </div>
+    <img class="card-img-top" src="{{ clothing.path.url }}" alt="{{ clothing.title }}">
+    <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" id="likeButton" class="like-button" width="16" height="16" fill="currentColor" viewBox="0 0 16 16 {% if liked %}liked{% endif %}">
+            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+            {% if user.is_authenticated %}
+                {% if liked %}
+                    {{ clothing.total_likes }}
+                {% else %}
+                    {{ clothing.total_likes }}
+                {% endif %}
+            {% else %}
+                {{ clothing.total_likes }}
+            {% endif %}
+        </svg>
+        <form method="post" action="{% url 'comment_clothing' clothing.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea class="form-control" name="content" rows="3" placeholder="Adicionar comentário"></textarea>
+            </div>
+            <button type="submit" class="btn btn-secondary">Comentar</button>
+        </form>
+        <h5 class="mt-4">Comentários:</h5>
+        {% for comment in comments %}
+            <div class="card mt-2">
+                <div class="card-body">
+                    <p class="card-text">{{ comment.content }}</p>
+                    <p class="card-text"><small class="text-muted">por {{ comment.user.username }}</small></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
